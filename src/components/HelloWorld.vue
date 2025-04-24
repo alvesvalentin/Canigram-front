@@ -1,41 +1,59 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import {computed, ref} from 'vue';
 
-defineProps<{ msg: string }>()
+const poids = ref(70); // en kg
+const age = ref(9) // en mois
 
-const count = ref(0)
+const besoinsEnergetiques = computed(() => {
+  if (!poids.value || !age.value) return 0;
+  return (128 * Math.pow(poids.value, 0.73) * Math.pow(age.value, -0.05));
+})
+
+const besoinsProteines = computed(() => {
+  if (!besoinsEnergetiques.value) return 0;
+  return 3 * poids.value;
+})
+
 </script>
 
 <template>
-  <h1>{{ msg }}</h1>
+  <h1>Canigram</h1>
 
-  <div class="card">
-    <button type="button" @click="count++">count is {{ count }}</button>
-    <p>
-      Edit
-      <code>components/HelloWorld.vue</code> to test HMR
-    </p>
+  <div class="dog-information">
+
+    <div class="age-and-weight">
+      <p>Poids idéal</p>
+      <input type="number" v-model="poids"/>
+
+      <p>Age (en mois)</p>
+      <input type="number" v-model="age"/>
+
+    </div>
   </div>
 
-  <p>
-    Check out
-    <a href="https://vuejs.org/guide/quick-start.html#local" target="_blank"
-      >create-vue</a
-    >, the official Vue + Vite starter
-  </p>
-  <p>
-    Learn more about IDE Support for Vue in the
-    <a
-      href="https://vuejs.org/guide/scaling-up/tooling.html#ide-support"
-      target="_blank"
-      >Vue Docs Scaling up Guide</a
-    >.
-  </p>
-  <p class="read-the-docs">Click on the Vite and Vue logos to learn more</p>
+  <div class="results">
+    <h3>Résultats</h3>
+
+    <div class="needs">
+      <span>Besoin énergétique</span> <span>{{ besoinsEnergetiques.toFixed(0) }}</span>
+
+      <br>
+
+      <span>Protéines</span> <span>{{besoinsProteines.toFixed(0)}}</span>
+
+      <br>
+
+      <span>Lipides</span> <span>Lipides</span>
+
+      <br>
+
+      <span>Glucides</span> <span>Glucides</span>
+    </div>
+  </div>
+
+
 </template>
 
 <style scoped>
-.read-the-docs {
-  color: #888;
-}
+
 </style>
